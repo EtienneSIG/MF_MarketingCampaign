@@ -1,0 +1,273 @@
+# Configuration - Customer 360 + CRM + Marketing Campaigns + Purchases
+# Modifiable pour ajuster les volumes et comportements
+
+# Volumes de données générées
+volumes:
+  # CRM
+  accounts: 2000
+  customers: 20000
+  segments: 40
+  interactions: 80000  # ~4 interactions/client
+  
+  # Marketing
+  campaigns: 20
+  assets_per_campaign: 3  # 60 assets total (email templates)
+  sends: 200000  # ~10 envois/client
+  events: 200000  # opens, clicks, bounces, unsubscribes
+  
+  # Commerce
+  products: 150
+  orders: 60000  # ~3 orders/client
+  order_lines_avg: 3  # 180 000 lignes
+  returns: 10000  # ~17% return rate
+  
+  # Text corpus
+  customer_notes: 20000  # 1 note par client
+  email_bodies: 60  # 1 body par asset
+
+# Période de simulation
+time_range:
+  start_date: "2025-01-01"
+  end_date: "2025-12-31"
+  campaign_duration_days_avg: 30
+  attribution_window_days: 14  # Fenêtre attribution post-click
+
+# Paramètres métier (distributions, taux)
+business_params:
+  # CRM
+  account_industries:
+    - name: "Technology"
+      weight: 25
+    - name: "Retail"
+      weight: 20
+    - name: "Finance"
+      weight: 15
+    - name: "Healthcare"
+      weight: 15
+    - name: "Manufacturing"
+      weight: 10
+    - name: "Education"
+      weight: 10
+    - name: "Other"
+      weight: 5
+  
+  account_tiers:
+    - tier: "enterprise"
+      weight: 10
+      employee_range: [500, 10000]
+    - tier: "mid_market"
+      weight: 30
+      employee_range: [50, 499]
+    - tier: "smb"
+      weight: 60
+      employee_range: [1, 49]
+  
+  regions:
+    - "EMEA"
+    - "Americas"
+    - "APAC"
+  
+  customer_lifecycle_stages:
+    - stage: "lead"
+      weight: 15
+    - stage: "prospect"
+      weight: 20
+    - stage: "active"
+      weight: 40
+    - stage: "at_risk"
+      weight: 15
+    - stage: "churned"
+      weight: 10
+  
+  consent_email_rate: 0.75  # 75% consentement email
+  consent_sms_rate: 0.40   # 40% consentement SMS
+  
+  preferred_channels:
+    - "email"
+    - "phone"
+    - "chat"
+    - "in_app"
+  
+  interaction_types:
+    - type: "support_ticket"
+      weight: 30
+      satisfaction_range: [1, 5]
+    - type: "sales_call"
+      weight: 25
+      satisfaction_range: [3, 5]
+    - type: "onboarding"
+      weight: 15
+      satisfaction_range: [3, 5]
+    - type: "feedback"
+      weight: 20
+      satisfaction_range: [1, 5]
+    - type: "complaint"
+      weight: 10
+      satisfaction_range: [1, 3]
+  
+  churn_risk_distribution:
+    - risk: "low"
+      weight: 50
+      score_range: [0, 30]
+    - risk: "medium"
+      weight: 30
+      score_range: [31, 60]
+    - risk: "high"
+      weight: 20
+      score_range: [61, 100]
+  
+  clv_distribution:  # Customer Lifetime Value proxy
+    mean: 5000
+    std: 3000
+    min: 100
+    max: 50000
+  
+  nps_distribution:  # Net Promoter Score
+    detractors: 20  # 0-6
+    passives: 30    # 7-8
+    promoters: 50   # 9-10
+  
+  # Marketing Campaigns
+  campaign_objectives:
+    - "acquisition"
+    - "retention"
+    - "upsell"
+    - "winback"
+    - "engagement"
+  
+  campaign_budget_range:
+    min: 5000
+    max: 100000
+  
+  ab_test_rate: 0.30  # 30% des campagnes ont A/B test
+  
+  email_languages:
+    - "fr"
+    - "en"
+    - "de"
+    - "es"
+  
+  marketing_event_rates:
+    open_rate_baseline: 0.22  # 22% open rate
+    click_rate_baseline: 0.08  # 8% click rate (parmi opens)
+    bounce_rate: 0.03         # 3% bounce
+    unsubscribe_rate: 0.005   # 0.5% unsubscribe
+  
+  ab_test_lift:  # Variant B performance vs A
+    open_lift_range: [0.05, 0.20]    # +5% à +20%
+    click_lift_range: [0.10, 0.30]   # +10% à +30%
+  
+  # Attribution & Conversion
+  conversion_baseline: 0.02  # 2% conversion sans exposition
+  conversion_post_open: 0.05  # 5% conversion après open
+  conversion_post_click: 0.12  # 12% conversion après click
+  
+  segment_campaign_boost:  # Certains segments ciblés performent mieux
+    targeted_boost: 1.5  # x1.5 conversion
+  
+  # Commerce
+  product_categories:
+    - category: "Electronics"
+      weight: 25
+      price_range: [50, 2000]
+      margin_range: [0.15, 0.35]
+    - category: "Clothing"
+      weight: 20
+      price_range: [20, 300]
+      margin_range: [0.40, 0.60]
+    - category: "Home & Garden"
+      weight: 15
+      price_range: [30, 800]
+      margin_range: [0.25, 0.50]
+    - category: "Sports & Outdoor"
+      weight: 15
+      price_range: [25, 1200]
+      margin_range: [0.30, 0.50]
+    - category: "Books & Media"
+      weight: 10
+      price_range: [10, 100]
+      margin_range: [0.20, 0.40]
+    - category: "Beauty & Health"
+      weight: 10
+      price_range: [15, 200]
+      margin_range: [0.35, 0.55]
+    - category: "Food & Beverage"
+      weight: 5
+      price_range: [5, 150]
+      margin_range: [0.15, 0.30]
+  
+  order_channels:
+    - "web"
+    - "mobile_app"
+    - "in_store"
+    - "phone"
+  
+  return_reasons:
+    - reason: "defective"
+      weight: 30
+    - reason: "wrong_item"
+      weight: 15
+    - reason: "not_as_described"
+      weight: 20
+    - reason: "changed_mind"
+      weight: 25
+    - reason: "other"
+      weight: 10
+  
+  discount_rate_avg: 0.10  # 10% discount moyen
+  promo_code_usage: 0.30   # 30% des commandes avec promo
+
+# Templates pour corpus texte
+text_templates:
+  customer_note_topics:
+    - "product_inquiry"
+    - "pricing_negotiation"
+    - "feature_request"
+    - "integration_support"
+    - "billing_issue"
+    - "contract_renewal"
+    - "technical_support"
+    - "training_request"
+    - "complaint_resolution"
+    - "feedback_positive"
+  
+  customer_note_sentiments:
+    - sentiment: "positive"
+      weight: 40
+    - sentiment: "neutral"
+      weight: 40
+    - sentiment: "negative"
+      weight: 20
+  
+  email_subject_templates:
+    acquisition:
+      - "Découvrez nos nouveautés {month}"
+      - "Offre exclusive : {discount}% de réduction"
+      - "Bienvenue chez {brand}"
+    retention:
+      - "Nous avons pensé à vous"
+      - "{name}, vos favoris vous attendent"
+      - "Restez connecté avec nous"
+    upsell:
+      - "Passez au niveau supérieur"
+      - "Upgrade offert ce mois-ci"
+      - "Découvrez notre offre Premium"
+    winback:
+      - "On vous a manqué ?"
+      - "Revenez et profitez de {discount}% de réduction"
+      - "{name}, une surprise vous attend"
+    engagement:
+      - "Participez à notre sondage"
+      - "Votre avis compte"
+      - "Nouveaux contenus disponibles"
+  
+  email_cta_templates:
+    - "Découvrir maintenant"
+    - "Profiter de l'offre"
+    - "En savoir plus"
+    - "Voir les nouveautés"
+    - "Accéder à mon compte"
+    - "Je m'inscris"
+
+# Seed pour reproductibilité
+random_seed: 42
