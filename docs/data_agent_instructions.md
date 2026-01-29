@@ -24,7 +24,7 @@ RÈGLES DE RÉPONSE :
 
 FORMAT :
 - Réponses data-driven avec chiffres précis
-- Comparaison aux objectifs (ex: Open Rate 22% vs objectif 20% ✅)
+- Comparaison aux objectifs (ex: Open Rate 22% vs objectif 20% )
 - Proposition next step (ciblage, budget, messaging)
 - Visualisation Power BI si pertinent (funnel, bar chart, line chart)
 
@@ -348,3 +348,4 @@ Les utilisateurs doivent pouvoir :
 ---
 
 *Ces instructions sont à coller dans la section "Instructions" du Fabric Data Agent lors de la configuration (voir `fabric_setup.md`).*
+
