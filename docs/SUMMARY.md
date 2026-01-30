@@ -14,24 +14,7 @@ Ce document résume les corrections apportées suite aux retours de la démo.
 
 ## Fichiers Créés
 
-### 1. CORRECTIONS_SCENARIO.md
-
-**Localisation:** `docs/CORRECTIONS_SCENARIO.md`
-
-**Contenu:**
-- Analyse détaillée des 3 problèmes
-- Solutions proposées pour les Shortcut Transformations (CSV vs TXT)
-- Guide de correction des noms de colonnes pour DAX
-- Checklist de validation post-corrections
-
-**Actions à Prendre:**
-- Lire attentivement les Options A, B, C pour les transformations AI
-- **Recommandation:** Option C (utiliser CSV au lieu de TXT pour données structurées)
-- Vérifier les noms de colonnes dans `generate_data.py`
-
----
-
-### 2. data_agent_instructions_clean.md
+### 1. data_agent_instructions_clean.md
 
 **Localisation:** `docs/data_agent_instructions_clean.md`
 
@@ -54,7 +37,7 @@ Ce document résume les corrections apportées suite aux retours de la démo.
 
 ---
 
-### 3. dax_measures.md
+### 2. dax_measures.md
 
 **Localisation:** `docs/dax_measures.md`
 
@@ -83,7 +66,7 @@ Ce document résume les corrections apportées suite aux retours de la démo.
 
 ---
 
-### 4. validate_schema.py
+### 3. validate_schema.py
 
 **Localisation:** `src/validate_schema.py`
 
@@ -280,3 +263,4 @@ R: Idéalement oui. Les erreurs bloquent les DAX queries. Les warnings sont info
 **Date de création:** 2026-01-30
 **Auteur:** GitHub Copilot
 **Version:** 1.0
+
