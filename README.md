@@ -2,8 +2,6 @@
 
 Démo complète Microsoft Fabric illustrant **OneLake**, **Shortcuts**, **AI Transformations**, et **Fabric Data Agent** avec un cas d'usage **Customer 360** (CRM + Marketing + Commerce).
 
-> **⚠️ IMPORTANT:** Consultez [docs/SUMMARY.md](docs/SUMMARY.md) pour les corrections récentes suite aux retours de démo.
-
 ---
 
 ## 🎯 Objectif
@@ -369,5 +367,6 @@ Pour améliorer le repo :
 **Bravo ! Vous êtes prêt à démontrer Microsoft Fabric avec un cas d'usage Customer 360 complet.** 🚀
 
 *Générez les données, déployez dans Fabric, et posez vos questions au Data Agent !*
+
 
 
