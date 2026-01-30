@@ -148,8 +148,6 @@ Poser les questions (voir [`docs/questions_demo.md`](docs/questions_demo.md)) :
 
 | Fichier | Description |
 |---------|-------------|
-| [`docs/SUMMARY.md`](docs/SUMMARY.md) | **NOUVEAU** - Résumé des corrections (transformations AI, DAX, Data Agent) |
-| [`docs/CORRECTIONS_SCENARIO.md`](docs/CORRECTIONS_SCENARIO.md) | **NOUVEAU** - Analyse détaillée des 3 problèmes + solutions |
 | [`docs/dax_measures.md`](docs/dax_measures.md) | **NOUVEAU** - 40+ mesures DAX validées et testées |
 | [`docs/data_agent_instructions_clean.md`](docs/data_agent_instructions_clean.md) | **NOUVEAU** - Instructions Data Agent sans emojis (version pro) |
 | [`src/validate_schema.py`](src/validate_schema.py) | **NOUVEAU** - Script de validation des schémas et colonnes |
@@ -372,3 +370,4 @@ Pour améliorer le repo :
 **Bravo ! Vous êtes prêt à démontrer Microsoft Fabric avec un cas d'usage Customer 360 complet.** 🚀
 
 *Générez les données, déployez dans Fabric, et posez vos questions au Data Agent !*
+
