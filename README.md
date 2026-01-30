@@ -2,6 +2,8 @@
 
 Démo complète Microsoft Fabric illustrant **OneLake**, **Shortcuts**, **AI Transformations**, et **Fabric Data Agent** avec un cas d'usage **Customer 360** (CRM + Marketing + Commerce).
 
+> **⚠️ IMPORTANT:** Consultez [docs/SUMMARY.md](docs/SUMMARY.md) pour les corrections récentes suite aux retours de démo.
+
 ---
 
 ## 🎯 Objectif
@@ -146,11 +148,16 @@ Poser les questions (voir [`docs/questions_demo.md`](docs/questions_demo.md)) :
 
 | Fichier | Description |
 |---------|-------------|
+| [`docs/SUMMARY.md`](docs/SUMMARY.md) | **NOUVEAU** - Résumé des corrections (transformations AI, DAX, Data Agent) |
+| [`docs/CORRECTIONS_SCENARIO.md`](docs/CORRECTIONS_SCENARIO.md) | **NOUVEAU** - Analyse détaillée des 3 problèmes + solutions |
+| [`docs/dax_measures.md`](docs/dax_measures.md) | **NOUVEAU** - 40+ mesures DAX validées et testées |
+| [`docs/data_agent_instructions_clean.md`](docs/data_agent_instructions_clean.md) | **NOUVEAU** - Instructions Data Agent sans emojis (version pro) |
+| [`src/validate_schema.py`](src/validate_schema.py) | **NOUVEAU** - Script de validation des schémas et colonnes |
 | [`docs/schema.md`](docs/schema.md) | Schéma complet (15 tables + relations + DAX) |
 | [`docs/demo_story.md`](docs/demo_story.md) | Scénario narratif "Du Lead au Champion" |
 | [`docs/questions_demo.md`](docs/questions_demo.md) | 15 questions pour Data Agent |
 | [`docs/fabric_setup.md`](docs/fabric_setup.md) | Guide de déploiement Fabric (step-by-step) |
-| [`docs/data_agent_instructions.md`](docs/data_agent_instructions.md) | System prompt Data Agent |
+| [`docs/data_agent_instructions.md`](docs/data_agent_instructions.md) | System prompt Data Agent (version verbose avec emojis) |
 | [`docs/data_agent_examples.md`](docs/data_agent_examples.md) | 20 exemples Q&A détaillés |
 | [`AGENTS.md`](AGENTS.md) | Conventions développement + helpers |
 | [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | Instructions GitHub Copilot |
