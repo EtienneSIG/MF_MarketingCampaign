@@ -550,3 +550,4 @@ WHERE c.consent_email = false;
 ---
 
 **Note** : Ce schéma permet des analyses d'attribution marketing, segmentation client, CLV, churn prediction, et optimisation de campagnes.
+

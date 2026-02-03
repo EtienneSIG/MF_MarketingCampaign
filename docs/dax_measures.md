@@ -16,13 +16,13 @@ Ce fichier contient toutes les mesures DAX testées et validées pour le semanti
 ## Relations Clés
 
 ```
-marketing_campaigns[campaign_id] 1 ----→ * orders[attributed_campaign_id]
-marketing_campaigns[campaign_id] 1 ----→ * marketing_sends[campaign_id]
-marketing_sends[send_id] 1 ----→ * marketing_events[send_id]
-crm_customers[customer_id] 1 ----→ * orders[customer_id]
-crm_customers[customer_id] 1 ----→ 1 crm_customer_profile[customer_id]
-orders[order_id] 1 ----→ * order_lines[order_id]
-products[product_id] 1 ----→ * order_lines[product_id]
+dim_campaigns[campaign_id] 1 ----→ * fact_orders[attributed_campaign_id]
+dim_campaigns[campaign_id] 1 ----→ * fact_sends[campaign_id]
+fact_sends[send_id] 1 ----→ * fact_events[send_id]
+dim_customers[customer_id] 1 ----→ * fact_orders[customer_id]
+dim_customers[customer_id] 1 ----→ 1 dim_customer_profile[customer_id]
+fact_orders[order_id] 1 ----→ * fact_order_lines[order_id]
+dim_products[product_id] 1 ----→ * fact_order_lines[product_id]
 ```
 
 ---
@@ -37,10 +37,10 @@ Calcule le retour sur investissement d'une campagne.
 Campaign ROI = 
 VAR Revenue = 
     CALCULATE(
-        SUM(orders[total_amount_eur]),
-        NOT(ISBLANK(orders[attributed_campaign_id]))
+        SUM(fact_orders[total_amount_eur]),
+        NOT(ISBLANK(fact_orders[attributed_campaign_id]))
     )
-VAR Cost = SUM(marketing_campaigns[budget_eur])
+VAR Cost = SUM(dim_campaigns[budget_eur])
 RETURN
     DIVIDE(Revenue - Cost, Cost, 0)
 ```
@@ -57,8 +57,8 @@ Revenue total attribué à une campagne (last-touch 14 jours).
 ```dax
 Campaign Revenue = 
 CALCULATE(
-    SUM(orders[total_amount_eur]),
-    NOT(ISBLANK(orders[attributed_campaign_id]))
+    SUM(fact_orders[total_amount_eur]),
+    NOT(ISBLANK(fact_orders[attributed_campaign_id]))
 )
 ```
 
@@ -74,8 +74,8 @@ Revenue non attribué (commandes organiques).
 ```dax
 Organic Revenue = 
 CALCULATE(
-    SUM(orders[total_amount_eur]),
-    ISBLANK(orders[attributed_campaign_id])
+    SUM(fact_orders[total_amount_eur]),
+    ISBLANK(fact_orders[attributed_campaign_id])
 )
 ```
 
@@ -90,7 +90,7 @@ Revenue total (attributed + organic).
 
 ```dax
 Total Revenue = 
-SUM(orders[total_amount_eur])
+SUM(fact_orders[total_amount_eur])
 ```
 
 **Format:** Currency (EUR)
@@ -107,7 +107,7 @@ Open Rate =
 VAR Opens = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "open"
+        fact_events[event_type] = "open"
     )
 VAR TotalSends = COUNTROWS(marketing_sends)
 RETURN
@@ -128,12 +128,12 @@ Click Rate =
 VAR Clicks = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "click"
+        fact_events[event_type] = "click"
     )
 VAR Opens = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "open"
+        fact_events[event_type] = "open"
     )
 RETURN
     DIVIDE(Clicks, Opens, 0)
@@ -153,7 +153,7 @@ Bounce Rate =
 VAR Bounces = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "bounce"
+        fact_events[event_type] = "bounce"
     )
 VAR TotalSends = COUNTROWS(marketing_sends)
 RETURN
@@ -175,7 +175,7 @@ Unsubscribe Rate =
 VAR Unsubscribes = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "unsubscribe"
+        fact_events[event_type] = "unsubscribe"
     )
 VAR TotalSends = COUNTROWS(marketing_sends)
 RETURN
@@ -197,7 +197,7 @@ Conversion Rate Post-Send =
 VAR AttributedOrders = 
     CALCULATE(
         COUNTROWS(orders),
-        NOT(ISBLANK(orders[attributed_campaign_id]))
+        NOT(ISBLANK(fact_orders[attributed_campaign_id]))
     )
 VAR TotalSends = COUNTROWS(marketing_sends)
 RETURN
@@ -219,12 +219,12 @@ Conversion Rate Post-Click =
 VAR AttributedOrders = 
     CALCULATE(
         COUNTROWS(orders),
-        NOT(ISBLANK(orders[attributed_campaign_id]))
+        NOT(ISBLANK(fact_orders[attributed_campaign_id]))
     )
 VAR Clicks = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "click"
+        fact_events[event_type] = "click"
     )
 RETURN
     DIVIDE(AttributedOrders, Clicks, 0)
@@ -242,7 +242,7 @@ Budget total des campagnes.
 
 ```dax
 Campaign Budget = 
-SUM(marketing_campaigns[budget_eur])
+SUM(dim_campaigns[budget_eur])
 ```
 
 **Format:** Currency (EUR)
@@ -256,11 +256,11 @@ Coût d'acquisition par commande.
 
 ```dax
 Cost Per Order = 
-VAR TotalBudget = SUM(marketing_campaigns[budget_eur])
+VAR TotalBudget = SUM(dim_campaigns[budget_eur])
 VAR AttributedOrders = 
     CALCULATE(
         COUNTROWS(orders),
-        NOT(ISBLANK(orders[attributed_campaign_id]))
+        NOT(ISBLANK(fact_orders[attributed_campaign_id]))
     )
 RETURN
     DIVIDE(TotalBudget, AttributedOrders, BLANK())
@@ -279,7 +279,7 @@ Customer Lifetime Value moyen.
 
 ```dax
 Average CLV = 
-AVERAGE(crm_customer_profile[clv_score])
+AVERAGE(dim_customer_profile[clv_score])
 ```
 
 **Format:** Currency (EUR)
@@ -293,7 +293,7 @@ CLV total de la base client.
 
 ```dax
 Total CLV = 
-SUM(crm_customer_profile[clv_score])
+SUM(dim_customer_profile[clv_score])
 ```
 
 **Format:** Currency (EUR)
@@ -309,7 +309,7 @@ Nombre de clients à risque (churn_risk_score > 60).
 Churn Risk Count = 
 CALCULATE(
     COUNTROWS(crm_customer_profile),
-    crm_customer_profile[churn_risk_score] > 60
+    dim_customer_profile[churn_risk_score] > 60
 )
 ```
 
@@ -325,8 +325,8 @@ Revenue potentiel perdu si les clients à risque churnent.
 ```dax
 Churn Risk Revenue Impact = 
 CALCULATE(
-    SUM(crm_customer_profile[clv_score]),
-    crm_customer_profile[churn_risk_score] > 60
+    SUM(dim_customer_profile[clv_score]),
+    dim_customer_profile[churn_risk_score] > 60
 )
 ```
 
@@ -341,7 +341,7 @@ Net Promoter Score moyen.
 
 ```dax
 Average NPS = 
-AVERAGE(crm_customer_profile[nps_last])
+AVERAGE(dim_customer_profile[nps_last])
 ```
 
 **Format:** Nombre (0-10)
@@ -372,7 +372,7 @@ Clients actifs (lifecycle_stage = 'active').
 Active Customers = 
 CALCULATE(
     COUNTROWS(crm_customers),
-    crm_customers[lifecycle_stage] = "active"
+    dim_customers[lifecycle_stage] = "active"
 )
 ```
 
@@ -389,7 +389,7 @@ Clients churned.
 Churned Customers = 
 CALCULATE(
     COUNTROWS(crm_customers),
-    crm_customers[lifecycle_stage] = "churned"
+    dim_customers[lifecycle_stage] = "churned"
 )
 ```
 
@@ -407,7 +407,7 @@ Churn Rate =
 VAR Churned = 
     CALCULATE(
         COUNTROWS(crm_customers),
-        crm_customers[lifecycle_stage] = "churned"
+        dim_customers[lifecycle_stage] = "churned"
     )
 VAR Total = COUNTROWS(crm_customers)
 RETURN
@@ -444,7 +444,7 @@ Commandes attribuées aux campagnes.
 Attributed Orders = 
 CALCULATE(
     COUNTROWS(orders),
-    NOT(ISBLANK(orders[attributed_campaign_id]))
+    NOT(ISBLANK(fact_orders[attributed_campaign_id]))
 )
 ```
 
@@ -461,7 +461,7 @@ Commandes organiques (non attribuées).
 Organic Orders = 
 CALCULATE(
     COUNTROWS(orders),
-    ISBLANK(orders[attributed_campaign_id])
+    ISBLANK(fact_orders[attributed_campaign_id])
 )
 ```
 
@@ -479,7 +479,7 @@ Attribution Rate =
 VAR Attributed = 
     CALCULATE(
         COUNTROWS(orders),
-        NOT(ISBLANK(orders[attributed_campaign_id]))
+        NOT(ISBLANK(fact_orders[attributed_campaign_id]))
     )
 VAR Total = COUNTROWS(orders)
 RETURN
@@ -499,7 +499,7 @@ Panier moyen.
 ```dax
 AOV = 
 DIVIDE(
-    SUM(orders[total_amount_eur]),
+    SUM(fact_orders[total_amount_eur]),
     COUNTROWS(orders),
     BLANK()
 )
@@ -516,7 +516,7 @@ Nombre total de produits vendus.
 
 ```dax
 Total Products Sold = 
-SUM(order_lines[qty])
+SUM(fact_order_lines[qty])
 ```
 
 **Format:** Nombre entier
@@ -531,7 +531,7 @@ Nombre moyen d'items par commande.
 ```dax
 Avg Items Per Order = 
 DIVIDE(
-    SUM(order_lines[qty]),
+    SUM(fact_order_lines[qty]),
     COUNTROWS(orders),
     BLANK()
 )
@@ -551,7 +551,7 @@ Repeat Purchase Rate =
 VAR RepeatCustomers = 
     CALCULATE(
         COUNTROWS(crm_customer_profile),
-        crm_customer_profile[total_orders] >= 2
+        dim_customer_profile[total_orders] >= 2
     )
 VAR TotalCustomers = COUNTROWS(crm_customers)
 RETURN
@@ -575,13 +575,13 @@ Variant A Open Rate =
 VAR SendsA = 
     CALCULATE(
         COUNTROWS(marketing_sends),
-        RELATED(marketing_assets[variant]) = "A"
+        RELATED(dim_assets[variant]) = "A"
     )
 VAR OpensA = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "open",
-        RELATED(marketing_assets[variant]) = "A"
+        fact_events[event_type] = "open",
+        RELATED(dim_assets[variant]) = "A"
     )
 RETURN
     DIVIDE(OpensA, SendsA, BLANK())
@@ -601,13 +601,13 @@ Variant B Open Rate =
 VAR SendsB = 
     CALCULATE(
         COUNTROWS(marketing_sends),
-        RELATED(marketing_assets[variant]) = "B"
+        RELATED(dim_assets[variant]) = "B"
     )
 VAR OpensB = 
     CALCULATE(
         COUNTROWS(marketing_events),
-        marketing_events[event_type] = "open",
-        RELATED(marketing_assets[variant]) = "B"
+        fact_events[event_type] = "open",
+        RELATED(dim_assets[variant]) = "B"
     )
 RETURN
     DIVIDE(OpensB, SendsB, BLANK())
@@ -643,7 +643,7 @@ Lifetime Value to Customer Acquisition Cost ratio.
 
 ```dax
 LTV:CAC Ratio = 
-VAR AvgCLV = AVERAGE(crm_customer_profile[clv_score])
+VAR AvgCLV = AVERAGE(dim_customer_profile[clv_score])
 VAR CAC = [Cost Per Order]
 RETURN
     DIVIDE(AvgCLV, CAC, BLANK())
@@ -680,7 +680,7 @@ Nombre de jours pour rentabiliser le budget campagne.
 Payback Period (est.) = 
 VAR DailyCampaignRevenue = 
     DIVIDE([Campaign Revenue], 365, BLANK())
-VAR Budget = SUM(marketing_campaigns[budget_eur])
+VAR Budget = SUM(dim_campaigns[budget_eur])
 RETURN
     DIVIDE(Budget, DailyCampaignRevenue, BLANK())
 ```
@@ -742,3 +742,4 @@ UNION(
 - Conversion Rate: ~2-3%
 - Attribution Rate: ~9%
 - Total Revenue: ~2-3M EUR
+
