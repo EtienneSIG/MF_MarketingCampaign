@@ -48,7 +48,7 @@ class SchemaValidator:
         print("--- Validation CRM Tables ---")
         
         # crm_customers
-        customers = self.load_csv('crm/crm_customers.csv')
+        customers = self.load_csv('crm/dim_customers.csv')
         if customers is not None:
             self.check_columns(customers, 'crm_customers', [
                 'customer_id', 'account_id', 'email', 'first_seen_at',
@@ -62,7 +62,7 @@ class SchemaValidator:
                 self.errors.append("crm_customers.customer_id doit être au format 'CUST_XXXXXX'")
         
         # crm_customer_profile
-        profile = self.load_csv('crm/crm_customer_profile.csv')
+        profile = self.load_csv('crm/dim_customer_profile.csv')
         if profile is not None:
             self.check_columns(profile, 'crm_customer_profile', [
                 'customer_id', 'churn_risk_score', 'clv_score', 'nps_last',
@@ -78,7 +78,7 @@ class SchemaValidator:
         print("--- Validation Marketing Tables ---")
         
         # marketing_campaigns
-        campaigns = self.load_csv('marketing/marketing_campaigns.csv')
+        campaigns = self.load_csv('marketing/dim_campaigns.csv')
         if campaigns is not None:
             self.check_columns(campaigns, 'marketing_campaigns', [
                 'campaign_id', 'campaign_name', 'objective', 'start_date',
@@ -91,14 +91,14 @@ class SchemaValidator:
                 self.errors.append("marketing_campaigns.campaign_id doit être au format 'CAMP_XXX'")
         
         # marketing_sends
-        sends = self.load_csv('marketing/marketing_sends.csv')
+        sends = self.load_csv('marketing/fact_sends.csv')
         if sends is not None:
             self.check_columns(sends, 'marketing_sends', [
                 'send_id', 'campaign_id', 'asset_id', 'customer_id', 'send_at'
             ])
         
         # marketing_events (CRITIQUE pour DAX)
-        events = self.load_csv('marketing/marketing_events.csv')
+        events = self.load_csv('marketing/fact_events.csv')
         if events is not None:
             self.check_columns(events, 'marketing_events', [
                 'event_id', 'send_id', 'customer_id', 'event_type',
@@ -124,7 +124,7 @@ class SchemaValidator:
         print("--- Validation Commerce Tables ---")
         
         # orders (CRITIQUE pour attribution)
-        orders = self.load_csv('commerce/orders.csv')
+        orders = self.load_csv('commerce/fact_orders.csv')
         if orders is not None:
             self.check_columns(orders, 'orders', [
                 'order_id', 'customer_id', 'order_at', 'channel',
@@ -151,7 +151,7 @@ class SchemaValidator:
                     )
         
         # order_lines
-        lines = self.load_csv('commerce/order_lines.csv')
+        lines = self.load_csv('commerce/fact_order_lines.csv')
         if lines is not None:
             self.check_columns(lines, 'order_lines', [
                 'order_line_id', 'order_id', 'product_id', 'qty',
@@ -159,7 +159,7 @@ class SchemaValidator:
             ])
         
         # products
-        products = self.load_csv('commerce/products.csv')
+        products = self.load_csv('commerce/dim_products.csv')
         if products is not None:
             self.check_columns(products, 'products', [
                 'product_id', 'product_name', 'category', 'brand',
@@ -173,10 +173,10 @@ class SchemaValidator:
         print("--- Validation Relations (Foreign Keys) ---")
         
         # Charger les tables principales
-        customers = self.load_csv('crm/crm_customers.csv')
-        campaigns = self.load_csv('marketing/marketing_campaigns.csv')
-        orders = self.load_csv('commerce/orders.csv')
-        sends = self.load_csv('marketing/marketing_sends.csv')
+        customers = self.load_csv('crm/dim_customers.csv')
+        campaigns = self.load_csv('marketing/dim_campaigns.csv')
+        orders = self.load_csv('commerce/fact_orders.csv')
+        sends = self.load_csv('marketing/fact_sends.csv')
         
         if customers is None or campaigns is None or orders is None or sends is None:
             self.errors.append("Impossible de valider les relations: tables manquantes")
