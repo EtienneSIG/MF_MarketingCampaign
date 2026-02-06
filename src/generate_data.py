@@ -912,9 +912,27 @@ Pour vous désabonner, cliquez ici : {{{{unsubscribe_link}}}}
     
     # ========== Main Orchestration ==========
     
+    def create_output_directories(self):
+        """Crée tous les dossiers nécessaires pour la génération des données"""
+        directories = [
+            '../data/raw/crm',
+            '../data/raw/marketing',
+            '../data/raw/commerce',
+            '../data/raw/text/customer_knowledge_notes',
+            '../data/raw/text/email_bodies'
+        ]
+        
+        for directory in directories:
+            Path(directory).mkdir(parents=True, exist_ok=True)
+        
+        print("✅ Output directories created")
+    
     def generate_all(self):
         """Génère toutes les données"""
         print("\n🚀 Starting Customer 360 data generation...\n")
+        
+        # Créer les dossiers de sortie
+        self.create_output_directories()
         
         # CRM
         self.generate_crm_accounts()
