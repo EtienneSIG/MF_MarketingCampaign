@@ -85,20 +85,54 @@ data/
 
 ### 2.2 Upload via l'Interface Fabric
 
+**⚠️ IMPORTANT : Structure d'upload**
+
+Les fichiers CSV doivent être uploadés dans la structure suivante dans le Lakehouse :
+```
+Files/
+├── crm/
+│   ├── crm_accounts.csv
+│   ├── crm_customers.csv
+│   ├── crm_segments.csv
+│   ├── crm_customer_segments.csv
+│   ├── crm_interactions.csv
+│   └── crm_customer_profile.csv
+├── marketing/
+│   ├── marketing_campaigns.csv
+│   ├── marketing_assets.csv
+│   ├── marketing_audiences.csv
+│   ├── marketing_sends.csv
+│   └── marketing_events.csv
+├── commerce/
+│   ├── products.csv
+│   ├── orders.csv
+│   ├── order_lines.csv
+│   └── returns.csv
+└── text/
+    ├── customer_knowledge_notes/
+    │   └── (20 000 fichiers .txt)
+    └── email_bodies/
+        └── (60 fichiers .txt)
+```
+
 **Option A : Upload direct (pour petits volumes)**
 
 1. Dans le Lakehouse, aller dans **Files**
-2. Créer une structure de dossiers :
+2. Pour chaque dossier :
    - Cliquer sur **Upload** → **Upload folder**
-   - Sélectionner `data/raw/crm`
-   - Répéter pour `data/raw/marketing`, `data/raw/commerce`, et `data/raw/text`
+   - Sélectionner le dossier local `data/raw/crm` 
+   - ⚠️ Assurez-vous que les fichiers sont uploadés dans **Files/crm/** (sans le sous-dossier "raw")
+   - Répéter pour `marketing`, `commerce`, et `text`
 
 **Option B : Upload via OneLake File Explorer (recommandé)**
 
 1. Installer [OneLake File Explorer](https://www.microsoft.com/en-us/download/details.aspx?id=105222) (Windows uniquement)
 2. Ouvrir OneLake File Explorer
 3. Naviguer vers votre workspace → `Marketing360_Lakehouse` → **Files**
-4. Copier-coller les dossiers `crm/`, `marketing/`, `commerce/`, et `text/` depuis votre explorateur Windows
+4. Créer les dossiers `crm`, `marketing`, `commerce`, `text` directement dans Files/
+5. Copier-coller les fichiers CSV depuis vos dossiers locaux `data/raw/crm/*` vers `Files/crm/`, etc.
+
+**💡 Astuce** : Le notebook de chargement (Étape 5.1) détecte automatiquement si vos fichiers sont dans `Files/crm/` ou `Files/raw/crm/`
 
 **Option C : Upload via API/CLI (pour automatisation)**
 
@@ -239,93 +273,50 @@ LIMIT 10;
 
 ## Étape 5 : Charger les CSV en Tables Delta
 
-### 5.1 Créer des Tables depuis les CSV
+### 5.1 Importer le Notebook de Chargement CSV
 
-Pour chaque fichier CSV, créer une table Delta.
+Le notebook de transformation est déjà créé dans le dossier `notebooks/` du projet.
 
-**Méthode A : Via l'interface (pour démo interactive)**
+1. Dans le workspace Fabric, cliquer **Import** → **Notebook**
+2. Sélectionner le fichier `notebooks/01_load_csv_to_delta.ipynb`
+3. Attendre l'import (quelques secondes)
+4. Ouvrir le notebook importé
+5. **Exécuter toutes les cellules** (bouton **Run all** ou Ctrl+Shift+Enter sur chaque cellule)
 
-1. Dans **Files**, naviguer vers `raw/crm/customers.csv`
-2. Clic droit → **Load to new table**
-3. Configurer :
-   - **Table name** : `crm_customers`
-   - **Delimiter** : Comma
-   - **First row has headers** : ✅ Yes
-   - **Infer schema** : ✅ Yes
-4. Cliquer sur **Load**
+**Ce que fait le notebook :**
+- ✅ Charge les 6 fichiers CSV CRM depuis Files/raw/crm/
+- ✅ Charge les 5 fichiers CSV Marketing depuis Files/raw/marketing/
+- ✅ Charge les 4 fichiers CSV Commerce depuis Files/raw/commerce/
+- ✅ Crée 15 tables Delta dans le Lakehouse
+- ✅ Affiche un résumé avec le nombre de lignes par table
+- ✅ Affiche un aperçu des données
 
-Répéter pour toutes les tables :
+**Tables créées :**
 
 **Tables CRM (6)** :
-- `crm_accounts` (accounts.csv)
-- `crm_customers` (customers.csv)
-- `crm_segments` (segments.csv)
-- `crm_customer_segments` (customer_segments.csv)
-- `crm_interactions` (interactions.csv)
-- `crm_customer_profile` (customer_profile.csv)
+- `crm_accounts` (comptes entreprises)
+- `crm_customers` (clients/contacts)
+- `crm_segments` (segments marketing)
+- `crm_customer_segments` (association clients-segments)
+- `crm_interactions` (historique interactions)
+- `crm_customer_profile` (profils enrichis)
 
 **Tables Marketing (5)** :
-- `marketing_campaigns` (campaigns.csv)
-- `marketing_assets` (assets.csv)
-- `marketing_audiences` (audiences.csv)
-- `marketing_sends` (sends.csv)
-- `marketing_events` (events.csv)
+- `marketing_campaigns` (campagnes marketing)
+- `marketing_assets` (assets email/SMS)
+- `marketing_audiences` (audiences ciblées)
+- `marketing_sends` (envois email/SMS)
+- `marketing_events` (événements tracking)
 
 **Tables Commerce (4)** :
-- `products` (products.csv)
-- `orders` (orders.csv)
-- `order_lines` (order_lines.csv)
-- `returns` (returns.csv)
+- `products` (catalogue produits)
+- `orders` (commandes)
+- `order_lines` (lignes de commande)
+- `returns` (retours produits)
 
-**Méthode B : Via Notebook (pour automatisation)**
+**Vérification :** Après exécution, vérifiez que les 15 tables apparaissent dans la section **Tables** du Lakehouse.
 
-Créer un Notebook dans le Lakehouse :
-
-```python
-# Notebook: Load CSV to Delta Tables
-
-from pyspark.sql import SparkSession
-
-# Chemins des fichiers CRM
-crm_files = {
-    "crm_accounts": "Files/raw/crm/accounts.csv",
-    "crm_customers": "Files/raw/crm/customers.csv",
-    "crm_segments": "Files/raw/crm/segments.csv",
-    "crm_customer_segments": "Files/raw/crm/customer_segments.csv",
-    "crm_interactions": "Files/raw/crm/interactions.csv",
-    "crm_customer_profile": "Files/raw/crm/customer_profile.csv"
-}
-
-# Chemins des fichiers Marketing
-marketing_files = {
-    "marketing_campaigns": "Files/raw/marketing/campaigns.csv",
-    "marketing_assets": "Files/raw/marketing/assets.csv",
-    "marketing_audiences": "Files/raw/marketing/audiences.csv",
-    "marketing_sends": "Files/raw/marketing/sends.csv",
-    "marketing_events": "Files/raw/marketing/events.csv"
-}
-
-# Chemins des fichiers Commerce
-commerce_files = {
-    "products": "Files/raw/commerce/products.csv",
-    "orders": "Files/raw/commerce/orders.csv",
-    "order_lines": "Files/raw/commerce/order_lines.csv",
-    "returns": "Files/raw/commerce/returns.csv"
-}
-
-# Fusionner tous les fichiers
-all_files = {**crm_files, **marketing_files, **commerce_files}
-
-# Charger chaque CSV en table Delta
-for table_name, file_path in all_files.items():
-    df = spark.read.csv(file_path, header=True, inferSchema=True)
-    df.write.format("delta").mode("overwrite").saveAsTable(table_name)
-    print(f"✅ Table {table_name} créée avec {df.count()} lignes")
-```
-
-Exécuter le notebook (Ctrl+Enter sur chaque cellule).
-
-✅ **Résultat attendu** : 15 tables CSV + 2 tables AI transformées = **17 tables au total** dans **Tables**.
+**⏱️ Temps d'exécution estimé :** 3-5 minutes
 
 ### 5.2 Vérifier les Types de Données
 
