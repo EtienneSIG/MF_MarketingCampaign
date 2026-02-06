@@ -51,36 +51,38 @@ Ce guide décrit **étape par étape** comment déployer la démo Customer 360 +
 ### 2.1 Préparer les Données Locales
 
 Sur votre machine locale, les données générées sont dans :
-```
-data/
-├── raw/
-│   ├── crm/
-│   │   ├── accounts.csv
-│   │   ├── customers.csv
-│   │   ├── segments.csv
-│   │   ├── customer_segments.csv
-│   │   ├── interactions.csv
-│   │   └── customer_profile.csv
-│   ├── marketing/
-│   │   ├── campaigns.csv
-│   │   ├── assets.csv
-│   │   ├── audiences.csv
-│   │   ├── sends.csv
-│   │   └── events.csv
-│   ├── commerce/
-│   │   ├── products.csv
-│   │   ├── orders.csv
-│   │   ├── order_lines.csv
-│   │   └── returns.csv
-│   └── text/
-│       ├── customer_knowledge_notes/
-│       │   ├── CUST_000001.txt
-│       │   ├── CUST_000002.txt
-│       │   └── ... (20 000 fichiers)
-│       └── email_bodies/
-│           ├── ASSET_001.txt
-│           ├── ASSET_002.txt
-│           └── ... (60 fichiers)
+
+```mermaid
+graph TD
+    DATA["📁 data/"]
+    RAW["📁 raw/"]
+    
+    CRM["📁 crm/"]
+    MARKETING["📁 marketing/"]
+    COMMERCE["📁 commerce/"]
+    TEXT["📁 text/"]
+    
+    DATA --> RAW
+    RAW --> CRM
+    RAW --> MARKETING
+    RAW --> COMMERCE
+    RAW --> TEXT
+    
+    CRM --> CSV1["📄 crm_accounts.csv<br/>crm_customers.csv<br/>crm_segments.csv<br/>crm_customer_segments.csv<br/>crm_interactions.csv<br/>crm_customer_profile.csv"]
+    
+    MARKETING --> CSV2["📄 marketing_campaigns.csv<br/>marketing_assets.csv<br/>marketing_audiences.csv<br/>marketing_sends.csv<br/>marketing_events.csv"]
+    
+    COMMERCE --> CSV3["📄 products.csv<br/>orders.csv<br/>order_lines.csv<br/>returns.csv"]
+    
+    TEXT --> NOTES["📁 customer_knowledge_notes/<br/>20 000 fichiers .txt"]
+    TEXT --> EMAILS["📁 email_bodies/<br/>60 fichiers .txt"]
+    
+    style DATA fill:#e3f2fd
+    style RAW fill:#fff3e0
+    style CRM fill:#e8f5e9
+    style MARKETING fill:#f3e5f5
+    style COMMERCE fill:#fce4ec
+    style TEXT fill:#fff9c4
 ```
 
 ### 2.2 Upload via l'Interface Fabric
@@ -88,31 +90,35 @@ data/
 **⚠️ IMPORTANT : Structure d'upload**
 
 Les fichiers CSV doivent être uploadés dans la structure suivante dans le Lakehouse :
-```
-Files/
-├── crm/
-│   ├── crm_accounts.csv
-│   ├── crm_customers.csv
-│   ├── crm_segments.csv
-│   ├── crm_customer_segments.csv
-│   ├── crm_interactions.csv
-│   └── crm_customer_profile.csv
-├── marketing/
-│   ├── marketing_campaigns.csv
-│   ├── marketing_assets.csv
-│   ├── marketing_audiences.csv
-│   ├── marketing_sends.csv
-│   └── marketing_events.csv
-├── commerce/
-│   ├── products.csv
-│   ├── orders.csv
-│   ├── order_lines.csv
-│   └── returns.csv
-└── text/
-    ├── customer_knowledge_notes/
-    │   └── (20 000 fichiers .txt)
-    └── email_bodies/
-        └── (60 fichiers .txt)
+
+```mermaid
+graph TD
+    FILES["📁 Files/"]
+    
+    CRM["📁 crm/"]
+    MARKETING["📁 marketing/"]
+    COMMERCE["📁 commerce/"]
+    TEXT["📁 text/"]
+    
+    FILES --> CRM
+    FILES --> MARKETING
+    FILES --> COMMERCE
+    FILES --> TEXT
+    
+    CRM --> CSV1["📄 crm_accounts.csv<br/>crm_customers.csv<br/>crm_segments.csv<br/>crm_customer_segments.csv<br/>crm_interactions.csv<br/>crm_customer_profile.csv"]
+    
+    MARKETING --> CSV2["📄 marketing_campaigns.csv<br/>marketing_assets.csv<br/>marketing_audiences.csv<br/>marketing_sends.csv<br/>marketing_events.csv"]
+    
+    COMMERCE --> CSV3["📄 products.csv<br/>orders.csv<br/>order_lines.csv<br/>returns.csv"]
+    
+    TEXT --> NOTES["📁 customer_knowledge_notes/<br/>20 000 fichiers .txt"]
+    TEXT --> EMAILS["📁 email_bodies/<br/>60 fichiers .txt"]
+    
+    style FILES fill:#e3f2fd
+    style CRM fill:#e8f5e9
+    style MARKETING fill:#f3e5f5
+    style COMMERCE fill:#fce4ec
+    style TEXT fill:#fff9c4
 ```
 
 **Option A : Upload direct (pour petits volumes)**
